@@ -13,6 +13,13 @@ using namespace std;
 int dr[4] = {-1, 0, 1, 0};
 int dc[4] = {0, 1, 0, -1};
 
+// to explore DFS, use
+// for (int i = 0; i < 4; i++) {
+//     int nr = r + dr[i]; // new row
+//     int nc = c + dc[i]; // new column
+// }
+// -1-0 up, 0-1 right, 1-0 down, 0-(-1) left
+//
 // ----------------------------------------------------------
 // DO NOT MODIFY: Maze generation
 // ----------------------------------------------------------
@@ -117,10 +124,74 @@ void printPath(pair<int,int> exitcell,
 // STUDENTS IMPLEMENT DFS HERE
 // Add arguments, return type, and logic
 // ----------------------------------------------------------
-// bool dfs(……) {
-//     // Your code here
-// }
+// note r is row and c is column, so we pass in two to know the coord of entrance/exit
+bool dfs(int ent_r, int ent_c, const vector<vector<int>>& maze, vector<vector<bool>>& visited,
+     vector<vector<int>>& parent_r, vector<vector<int>>& parent_c, int exit_r, int exit_c) {
+    // outline:
+    // mark the current cell as visited
+    // check if exit
+    // then check all adjacent ones (use the arrays at the top)
+    // for each checked cell:
+    // check within bounds OR not a wall
+    // check if visited
+    // then store as parent
+    // now recurse ie check nodes next to the parent
 
+    // first set coord we are at
+    int r = ent_r;
+    int c = ent_c;
+    visited[r][c] = true;
+
+
+        // 5. Checking if (r, c) is the exit
+        // check if at exit yet
+        if (r == exit_r && c == exit_c) {
+            return true;
+        }
+
+        // check the 4 different adjacent grid parts
+        // 6. exploring neighbors using dr and dc
+        for (int i = 0; i < 4; i++) {
+            int nr = r + dr[i];
+            int nc = c + dc[i];
+
+
+            // 1. Out-of-bounds checks
+            if (nr < 0 || nr >= maze.size()) {
+                continue;
+            }
+            if (nc < 0 || nc >= maze[0].size()) {
+                continue;
+            }
+
+            // 2. Wall checks (maze[r][c] == 1)
+            if (maze[nr][nc] == 1) {
+                continue;
+            }
+            // check if already seen
+            // 3. Visited checks
+            if (visited[nr][nc] == true) {
+                continue;
+            }
+
+            // 4. Marking the current cell as visited
+            visited[nr][nc] = true;
+
+            // save past parent
+            parent_r[nr][nc] = r;
+            parent_c[nr][nc] = c;
+
+            // note that nc and nr are our parents to now look through
+            // 7. Assigning the parent before recursing
+
+            // recurse ie now check everything next to parent
+            // 8. Returning true when the exit is found
+            if (dfs(nr, nc, maze, visited, parent_r, parent_c, exit_r, exit_c)) {
+                return true;
+            }
+        }
+    return false;
+    }
 
 // ----------------------------------------------------------
 // MAIN PROGRAM (students add DFS calls and logic)
@@ -159,17 +230,17 @@ int main() {
     // STUDENT WORK:
     // Call your DFS, track visited, and fill parent_r and parent_c
     // ------------------------------------------------------
-    // bool found = dfs(ent_r, ent_c, maze, visited, parent_r, parent_c, exit_r, exit_c);
+    bool found = dfs(ent_r, ent_c, maze, visited, parent_r, parent_c, exit_r, exit_c);
 
     // ------------------------------------------------------
     // STUDENT WORK:
     // If found, print the path
     // ------------------------------------------------------
-    // if (found) {
-    //     printPath(exitcell, parent_r, parent_c, ent_r, ent_c);
-    // } else {
-    //     cout << "\nNo path exists.\n";
-    // }
+    if (found) {
+         printPath(exitcell, parent_r, parent_c, ent_r, ent_c);
+     } else {
+         cout << "\nNo path exists.\n";
+     }
 
     return 0;
 }
