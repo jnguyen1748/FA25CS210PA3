@@ -140,6 +140,7 @@ bool dfs(int ent_r, int ent_c, const vector<vector<int>>& maze, vector<vector<bo
     // first set coord we are at
     int r = ent_r;
     int c = ent_c;
+    // immediately add to visited
     visited[r][c] = true;
 
 
@@ -152,8 +153,8 @@ bool dfs(int ent_r, int ent_c, const vector<vector<int>>& maze, vector<vector<bo
         // check the 4 different adjacent grid parts
         // 6. exploring neighbors using dr and dc
         for (int i = 0; i < 4; i++) {
-            int nr = r + dr[i];
-            int nc = c + dc[i];
+            int nr = r + dr[i]; // neighbor row
+            int nc = c + dc[i]; // column
 
 
             // 1. Out-of-bounds checks
@@ -174,10 +175,10 @@ bool dfs(int ent_r, int ent_c, const vector<vector<int>>& maze, vector<vector<bo
                 continue;
             }
 
-            // 4. Marking the current cell as visited
+            // 4. Marking the neighbor cell we are looking at as visited
             visited[nr][nc] = true;
 
-            // save past parent
+            // save parent before moving onto neighbor
             parent_r[nr][nc] = r;
             parent_c[nr][nc] = c;
 
